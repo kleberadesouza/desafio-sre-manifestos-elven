@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: desafio-app-deployment
+  namespace: desafio-app 
+spec:
+  replicas: 2 
+  selector:
+    matchLabels:
+      app: desafio-app
+  template:
+    metadata:
+      labels:
+        app: desafio-app
+    spec:
+      containers:
+      - name: app
+        # ⬇️ SUBSTITUA PELA SUA URL ECR e use tag: aqui eu coloquei a tag do hash do meu comit
+        image: 027922993398.dkr.ecr.us-east-1.amazonaws.com/desafio-sre-app-repo:90f74f05f667bb95011bb133789c141a3c3c9eba
+        ports:
+        - containerPort: 8080 
+        env:
+        - name: DB_HOST 
+          # ⬇️ SUBSTITUA PELO SEU ENDPOINT RDS (do 'terraform output')
+          value: desafio-sre-postgres-db.cc9ewquagf0o.us-east-1.rds.amazonaws.com 
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_USER
+          value: "postgres" 
+        - name: DB_PASSWORD
+          # ⬇️ SUBSTITUA PELA SENHA QUE VOCÊ USOU NO TF_VAR_db_password
+          # (Lembrete: Vamos mudar isso para Secrets depois)
+          value: SenhaSegura2025#$!
+        - name: DB_NAME
+          value: "postgres"
+        - name: REDIS_HOST
+          # ⬇️ SUBSTITUA PELO SEU ENDPOINT REDIS (do 'terraform output', sem a porta)
+          value: desafio-sre-redis-cluster.t8qlwj.0001.use1.cache.amazonaws.com 
+        - name: REDIS_PORT
+          value: "6379"
